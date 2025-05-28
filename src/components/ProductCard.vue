@@ -5,13 +5,28 @@
       <el-text class="truncate-text">{{ props.title }}</el-text>
       <el-text type="success">$ {{ props.price.toLocaleString() }}</el-text>
       <div>
-        <el-button class="add-to-cart-btn">Add to Cart</el-button>
+        <el-button
+          class="add-to-cart-btn"
+          :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
+          @click="
+            {
+              {
+                cartStore.isInCart(props.id)
+                  ? emit('remove-from-cart', props.id)
+                  : emit('add-to-cart', props.id);
+              }
+            }
+          "
+          >{{ cartStore.isInCart(props.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
+        >
       </div>
     </template>
   </el-card>
 </template>
 
 <script setup lang="ts">
+import { useCartStore } from '@/stores/cartStore';
+
 const props = defineProps<{
   id: number;
   title: string;
@@ -24,6 +39,13 @@ const props = defineProps<{
     count: number;
   };
 }>();
+
+const emit = defineEmits<{
+  (e: 'add-to-cart', id: number): void;
+  (e: 'remove-from-cart', id: number): void;
+}>();
+
+const cartStore = useCartStore();
 </script>
 
 <style scoped>
@@ -43,10 +65,8 @@ const props = defineProps<{
 
 .add-to-cart-btn {
   width: 100%;
-  background-color: #409eff;
-  color: white;
   border-radius: 4px;
   text-align: center;
-  margin-top: 0.5rem;
+  margin-top: 1.5rem;
 }
 </style>

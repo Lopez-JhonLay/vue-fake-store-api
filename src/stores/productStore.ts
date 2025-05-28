@@ -1,4 +1,3 @@
-// stores/productStore.ts
 import { defineStore } from 'pinia';
 
 import { ref } from 'vue';

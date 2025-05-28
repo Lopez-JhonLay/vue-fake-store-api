@@ -11,7 +11,7 @@
             :prefix-icon="Search"
             class="hidden-sm-and-down"
           />
-          <el-badge :value="1" class="item" type="primary">
+          <el-badge :value="cartStore.totalItems" class="item" type="primary">
             <el-button :icon="ShoppingCart">Cart</el-button>
           </el-badge>
         </div>
@@ -47,6 +47,8 @@
                 :image="product.image"
                 :description="product.description"
                 :price="product.price"
+                @add-to-cart="handleAddToCart(product.id)"
+                @remove-from-cart="handleRemoveFromCart(product.id)"
               />
             </el-col>
           </template>
@@ -63,13 +65,39 @@ import { onMounted, ref } from 'vue';
 import { Search, ShoppingCart } from '@element-plus/icons-vue';
 
 import { useProductStore } from './stores/productStore';
+import { useCartStore } from './stores/cartStore';
 
 import ProductCard from './components/ProductCard.vue';
 import ProductCardSkeleton from './components/ProductCardSkeleton.vue';
 
 const productStore = useProductStore();
+const cartStore = useCartStore();
 
 const input2 = ref('');
+
+const handleAddToCart = (id: number) => {
+  console.log(`Adding product with id ${id} to cart.`);
+  const product = productStore.products.find((p) => p.id === id);
+
+  if (!product) {
+    console.error(`Product with id ${id} not found.`);
+    return;
+  }
+
+  const item = {
+    id: product.id,
+    title: product.title,
+    price: product.price,
+    image: product.image,
+    quantity: 1,
+  };
+
+  cartStore.addToCart(item);
+};
+
+const handleRemoveFromCart = (id: number) => {
+  cartStore.removeFromCart(id);
+};
 
 onMounted(() => {
   productStore.loadProducts();
