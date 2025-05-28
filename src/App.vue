@@ -9,6 +9,7 @@
             style="width: 240px"
             placeholder="Type something"
             :prefix-icon="Search"
+            class="hidden-sm-and-down"
           />
           <el-badge :value="1" class="item" type="primary">
             <el-button :icon="ShoppingCart">Cart</el-button>
@@ -17,6 +18,13 @@
       </el-header>
       <el-divider />
       <el-main>
+        <el-input
+          v-model="input2"
+          style="width: 240px; margin-bottom: 20px"
+          placeholder="Type something"
+          :prefix-icon="Search"
+          class="hidden-md-and-up"
+        />
         <el-row :gutter="20">
           <template v-if="productStore.isLoading">
             <el-col v-for="n in 10" :key="n" :xs="24" :sm="24" :md="12" :lg="8" :xl="4">
