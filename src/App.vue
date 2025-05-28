@@ -3,63 +3,68 @@
     <el-container>
       <el-header>
         <div><h3>Pekeng Tindahan</h3></div>
-        <div></div>
+        <div style="display: flex; gap: 1rem">
+          <el-input
+            v-model="input2"
+            style="width: 240px"
+            placeholder="Type something"
+            :prefix-icon="Search"
+          />
+          <el-badge :value="1" class="item" type="primary">
+            <el-button :icon="ShoppingCart">Cart</el-button>
+          </el-badge>
+        </div>
       </el-header>
       <el-divider />
       <el-main>
         <el-row :gutter="20">
-          <el-col
-            v-for="product in products"
-            :key="product.id"
-            :xs="24"
-            :sm="24"
-            :md="12"
-            :lg="8"
-            :xl="4"
-          >
-            <ProductCard
-              :id="product.id"
-              :title="product.title"
-              :image="product.image"
-              :description="product.description"
-              :price="product.price"
-            />
-          </el-col>
+          <template v-if="productStore.isLoading">
+            <el-col v-for="n in 10" :key="n" :xs="24" :sm="24" :md="12" :lg="8" :xl="4">
+              <ProductCardSkeleton />
+            </el-col>
+          </template>
+          <template v-else>
+            <el-col
+              v-for="product in productStore.products"
+              :key="product.id"
+              :xs="24"
+              :sm="24"
+              :md="12"
+              :lg="8"
+              :xl="4"
+            >
+              <ProductCard
+                :id="product.id"
+                :title="product.title"
+                :image="product.image"
+                :description="product.description"
+                :price="product.price"
+              />
+            </el-col>
+          </template>
         </el-row>
       </el-main>
-      <el-footer>Footer</el-footer>
+      <!-- <el-footer>Footer</el-footer> -->
     </el-container>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { onMounted, ref } from 'vue';
 
-import axios from 'axios';
+import { Search, ShoppingCart } from '@element-plus/icons-vue';
 
-import type { Product } from '@/models/product';
+import { useProductStore } from './stores/productStore';
 
 import ProductCard from './components/ProductCard.vue';
+import ProductCardSkeleton from './components/ProductCardSkeleton.vue';
 
-const products = ref<Product[]>([]);
-const isLoading = ref<boolean>(false);
+const productStore = useProductStore();
 
-const loadProducts = async () => {
-  try {
-    isLoading.value = true;
-    const response = await axios.get<Product[]>('https://fakestoreapi.com/products');
-    products.value = response.data;
-    console.log('Products response data:', response.data);
-    console.log('Products:', products.value);
-  } catch (error) {
-    console.error('Error fetching data:', error);
-  } finally {
-    isLoading.value = false;
-  }
-};
+const input2 = ref('');
 
 onMounted(() => {
-  loadProducts();
+  productStore.loadProducts();
 });
 </script>
 
