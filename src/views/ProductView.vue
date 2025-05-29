@@ -1,42 +1,51 @@
 <template>
-  <el-card class="product-card">
-    <el-image
-      :src="productStore.selectedProduct?.image"
-      fit="contain"
-      alt="{{ props.name }}"
-      draggable="false"
-      hover
-    />
-    <template #footer>
-      <el-text size="large" tag="b">{{ productStore.selectedProduct?.title }}</el-text>
-      <el-text>{{ productStore.selectedProduct?.description }}</el-text>
-      <el-tag type="primary">{{ productStore.selectedProduct?.category }}</el-tag>
-      <el-rate
-        :model-value="productStore.selectedProduct?.rating?.rate"
-        disabled
-        show-score
-        text-color="#ff9900"
-        score-template="{value} points"
-      />
-      <el-text type="success" size="large" tag="b"
-        >$ {{ productStore.selectedProduct?.price.toLocaleString() }}</el-text
-      >
-      <el-button
-        class="add-to-cart-btn"
-        :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
-        @click.stop="
-          {
-            {
-              cartStore.isInCart(props.id)
-                ? handleRemoveFromCart(props.id)
-                : handleAddToCart(props.id);
-            }
-          }
-        "
-        >{{ cartStore.isInCart(props.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
-      >
-    </template>
-  </el-card>
+  <div class="common-layout">
+    <el-container>
+      <el-header>
+        <HeaderComponent />
+      </el-header>
+      <el-main>
+        <el-card class="product-card">
+          <el-image
+            :src="productStore.selectedProduct?.image"
+            fit="contain"
+            alt="{{ props.name }}"
+            draggable="false"
+            hover
+          />
+          <template #footer>
+            <el-text size="large" tag="b">{{ productStore.selectedProduct?.title }}</el-text>
+            <el-text>{{ productStore.selectedProduct?.description }}</el-text>
+            <el-tag type="primary">{{ productStore.selectedProduct?.category }}</el-tag>
+            <el-rate
+              :model-value="productStore.selectedProduct?.rating?.rate"
+              disabled
+              show-score
+              text-color="#ff9900"
+              score-template="{value} points"
+            />
+            <el-text type="success" size="large" tag="b"
+              >$ {{ productStore.selectedProduct?.price.toLocaleString() }}</el-text
+            >
+            <el-button
+              class="add-to-cart-btn"
+              :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
+              @click.stop="
+                {
+                  {
+                    cartStore.isInCart(props.id)
+                      ? handleRemoveFromCart(props.id)
+                      : handleAddToCart(props.id);
+                  }
+                }
+              "
+              >{{ cartStore.isInCart(props.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
+            >
+          </template>
+        </el-card>
+      </el-main>
+    </el-container>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -44,6 +53,8 @@ import { onMounted } from 'vue';
 
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
+
+import HeaderComponent from '@/components/HeaderComponent.vue';
 
 const props = defineProps<{ id: number }>();
 
@@ -80,6 +91,23 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+:deep(.el-container) {
+  width: 100%;
+  max-width: 1800px;
+  height: 100vh;
+  margin: 0 auto;
+}
+
+:deep(.el-header) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:deep(.el-divider) {
+  margin: 0;
+}
+
 .product-card {
   width: 100%;
   max-width: 500px;
@@ -127,7 +155,7 @@ onMounted(async () => {
 
 @media (min-width: 480px) {
   .product-card {
-    max-width: 900px;
+    max-width: 1200px;
     flex-direction: row;
   }
 }

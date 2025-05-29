@@ -2,28 +2,15 @@
   <div class="common-layout">
     <el-container>
       <el-header>
-        <div><h3>Pekeng Tindahan</h3></div>
-        <div style="display: flex; gap: 1rem">
-          <el-input
-            v-model="searchProductQuery"
-            style="width: 240px"
-            placeholder="Type something"
-            :prefix-icon="Search"
-            class="hidden-sm-and-down"
-          />
-          <el-badge :value="cartStore.totalItems" class="item" type="primary">
-            <el-button :icon="ShoppingCart">Cart</el-button>
-          </el-badge>
-        </div>
+        <HeaderComponent />
       </el-header>
       <el-divider />
       <el-main>
         <el-input
           v-model="searchProductQuery"
           style="width: 240px; margin-bottom: 20px"
-          placeholder="Type something"
+          placeholder="Search products"
           :prefix-icon="Search"
-          class="hidden-md-and-up"
         />
         <el-row :gutter="20">
           <template v-if="productStore.isLoading">
@@ -63,11 +50,12 @@
 <script setup lang="ts">
 import { onMounted, ref, computed, watch } from 'vue';
 
-import { Search, ShoppingCart } from '@element-plus/icons-vue';
+import { Search } from '@element-plus/icons-vue';
 
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
 
+import HeaderComponent from '@/components/HeaderComponent.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue';
 
