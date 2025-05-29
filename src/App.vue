@@ -5,7 +5,7 @@
         <div><h3>Pekeng Tindahan</h3></div>
         <div style="display: flex; gap: 1rem">
           <el-input
-            v-model="input2"
+            v-model="searchProductQuery"
             style="width: 240px"
             placeholder="Type something"
             :prefix-icon="Search"
@@ -19,7 +19,7 @@
       <el-divider />
       <el-main>
         <el-input
-          v-model="input2"
+          v-model="searchProductQuery"
           style="width: 240px; margin-bottom: 20px"
           placeholder="Type something"
           :prefix-icon="Search"
@@ -33,7 +33,7 @@
           </template>
           <template v-else>
             <el-col
-              v-for="product in productStore.products"
+              v-for="product in filteredProducts"
               :key="product.id"
               :xs="24"
               :sm="24"
@@ -60,7 +60,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, computed, watch } from 'vue';
 
 import { Search, ShoppingCart } from '@element-plus/icons-vue';
 
@@ -70,10 +70,28 @@ import { useCartStore } from './stores/cartStore';
 import ProductCard from './components/ProductCard.vue';
 import ProductCardSkeleton from './components/ProductCardSkeleton.vue';
 
+import debounce from 'lodash/debounce';
+
 const productStore = useProductStore();
 const cartStore = useCartStore();
 
-const input2 = ref('');
+const searchProductQuery = ref('');
+const debouncedQuery = ref('');
+
+const updateDebouncedQuery = debounce((val: string) => {
+  debouncedQuery.value = val;
+}, 400);
+
+const filteredProducts = computed(() => {
+  if (!debouncedQuery.value) return productStore.products;
+  return productStore.products.filter((product) =>
+    product.title.toLowerCase().includes(debouncedQuery.value.toLowerCase()),
+  );
+});
+
+watch(searchProductQuery, (val) => {
+  updateDebouncedQuery(val);
+});
 
 const handleAddToCart = (id: number) => {
   console.log(`Adding product with id ${id} to cart.`);
