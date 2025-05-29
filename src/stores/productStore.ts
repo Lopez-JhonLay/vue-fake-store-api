@@ -8,6 +8,7 @@ import { productService } from '@/service/productService';
 
 export const useProductStore = defineStore('product', () => {
   const products = ref<Product[]>([]);
+  const selectedProduct = ref<Product | null>(null);
   const isLoading = ref(false);
 
   const loadProducts = async () => {
@@ -23,14 +24,12 @@ export const useProductStore = defineStore('product', () => {
 
   const loadProductById = async (id: number) => {
     try {
+      console.log(`Loading product with ID: ${id}`);
       isLoading.value = true;
       const product = await productService.fetchProductById(id);
-      const index = products.value.findIndex((p) => p.id === id);
-      if (index !== -1) {
-        products.value[index] = product;
-      } else {
-        products.value.push(product);
-      }
+
+      selectedProduct.value = product;
+      console.log(`Loaded product from store:`, selectedProduct.value);
     } catch (err) {
       console.error(err);
     } finally {
@@ -38,5 +37,5 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
-  return { products, isLoading, loadProducts };
+  return { products, selectedProduct, isLoading, loadProducts, loadProductById };
 });
