@@ -1,5 +1,5 @@
 <template>
-  <el-card class="product-card" shadow="hover">
+  <el-card class="product-card" shadow="hover" @click="emit('go-to-product', props.id)">
     <el-image :src="props.image" fit="contain" alt="{{ props.name }}" draggable="false" hover />
     <template #footer>
       <el-text class="truncate-text">{{ props.title }}</el-text>
@@ -8,7 +8,7 @@
         <el-button
           class="add-to-cart-btn"
           :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
-          @click="
+          @click.stop="
             {
               {
                 cartStore.isInCart(props.id)
@@ -43,6 +43,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: 'add-to-cart', id: number): void;
   (e: 'remove-from-cart', id: number): void;
+  (e: 'go-to-product', id: number): void;
 }>();
 
 const cartStore = useCartStore();

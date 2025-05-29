@@ -21,5 +21,22 @@ export const useProductStore = defineStore('product', () => {
     }
   };
 
+  const loadProductById = async (id: number) => {
+    try {
+      isLoading.value = true;
+      const product = await productService.fetchProductById(id);
+      const index = products.value.findIndex((p) => p.id === id);
+      if (index !== -1) {
+        products.value[index] = product;
+      } else {
+        products.value.push(product);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
   return { products, isLoading, loadProducts };
 });
