@@ -138,6 +138,10 @@ onMounted(() => {
   margin: 0;
 }
 
+:deep(.el-main) {
+  scrollbar-width: none;
+}
+
 .el-col {
   margin-bottom: 20px;
 }

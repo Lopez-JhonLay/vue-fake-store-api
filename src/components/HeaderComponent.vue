@@ -1,7 +1,7 @@
 <template>
   <div><h3>Pekeng Tindahan</h3></div>
   <div style="display: flex; gap: 1rem">
-    <el-badge :value="cartStore.totalItems" class="item" type="primary">
+    <el-badge :value="cartStore.totalItems" class="item" type="danger">
       <el-button :icon="ShoppingCart" @click="openCartDrawer()">Cart</el-button>
     </el-badge>
   </div>
