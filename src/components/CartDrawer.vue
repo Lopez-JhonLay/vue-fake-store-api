@@ -1,22 +1,59 @@
 <template>
-  <el-drawer
-    v-model="isCartDrawerOpen"
-    direction="rtl"
-    :size="isMobile ? '100%' : '30%'"
-    style="
-      --el-drawer-bg-color: rgba(255, 255, 255, 0.25);
-      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-      backdrop-filter: blur(4px);
-      -webkit-backdrop-filter: blur(4px);
-      border-top-left-radius: 10px;
-      border-bottom-left-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-    "
-  >
+  <el-drawer v-model="isCartDrawerOpen" direction="rtl" :size="isMobile ? '100%' : '20%'">
     <template #header>
       <el-text class="cart-title">{{ cartTitle }}</el-text>
     </template>
-    <span>Hi, there!</span>
+    <div>
+      <el-empty
+        v-if="cartStore.cartItems.length === 0"
+        description="Your cart is empty"
+        style="margin-top: 20px; text-align: center"
+      />
+      <el-list v-else>
+        <div class="cart-items-container">
+          <div v-for="item in cartStore.cartItems" :key="item.id" class="cart-item">
+            <div class="cart-item-content">
+              <div style="align-self: flex-end">
+                <el-button
+                  type="danger"
+                  :icon="Close"
+                  @click="useCartStore().removeFromCart(item.id)"
+                />
+              </div>
+              <el-image
+                :src="item.image"
+                fit="cover"
+                style="
+                  width: 100px;
+                  height: auto;
+                  margin-right: 10px;
+                  position: relative;
+                  bottom: 100px;
+                  left: 20px;
+                "
+              />
+              <div style="margin-bottom: 10px">
+                <el-text>{{ item.title }}</el-text>
+              </div>
+              <div style="display: flex; justify-content: space-between">
+                <el-text type="success" size="large">$ {{ item.price.toLocaleString() }}</el-text>
+                <el-button-group class="ml-4">
+                  <el-button type="primary" :icon="Plus" />
+                  <el-button type="primary">{{ item.quantity }}</el-button>
+                  <el-button type="primary" :icon="Minus" />
+                </el-button-group>
+              </div>
+            </div>
+          </div>
+        </div>
+      </el-list>
+    </div>
+    <template #footer>
+      <el-button type="success" style="width: 100%; margin-top: 20px">
+        Proceed to Checkout
+        <el-icon class="el-icon--right"><ArrowRight /></el-icon>
+      </el-button>
+    </template>
   </el-drawer>
 </template>
 
@@ -24,6 +61,8 @@
 import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
 
 import { useCartStore } from '@/stores/cartStore';
+
+import { Plus, Minus, Close } from '@element-plus/icons-vue';
 
 const props = defineProps<{
   modelValue?: boolean;
@@ -35,7 +74,7 @@ const cartStore = useCartStore();
 
 const isCartDrawerOpen = ref(props.modelValue);
 
-const cartTitle = computed(() => `Shopping (${cartStore.totalItems}) items`);
+const cartTitle = computed(() => `Shopping (${cartStore.totalItems}) item/s`);
 
 const isMobile = ref(window.innerWidth < 768);
 
@@ -69,5 +108,19 @@ onUnmounted(() => {
   color: rgb(160, 39, 39);
   font-weight: bold;
   font-size: 1.2em;
+}
+
+.cart-item-content {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid rgb(109, 107, 107);
+}
+
+.cart-items-container {
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 100px;
 }
 </style>
