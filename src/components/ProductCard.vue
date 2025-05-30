@@ -3,6 +3,12 @@
     <el-image :src="product.image" fit="contain" alt="{{ product.name }}" draggable="false" hover />
     <template #footer>
       <el-text class="truncate-text">{{ product.title }}</el-text>
+      <el-rate
+        :model-value="product.rating.rate"
+        disabled
+        text-color="#ff9900"
+        style="display: block"
+      />
       <el-text type="success" size="large">$ {{ product.price.toLocaleString() }}</el-text>
       <div>
         <el-button

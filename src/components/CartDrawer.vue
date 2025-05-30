@@ -1,7 +1,6 @@
 <template>
   <el-drawer
     v-model="isCartDrawerOpen"
-    title="I am the title"
     direction="rtl"
     :size="isMobile ? '100%' : '30%'"
     style="
@@ -14,12 +13,17 @@
       border: 1px solid rgba(255, 255, 255, 0.18);
     "
   >
+    <template #header>
+      <el-text class="cart-title">{{ cartTitle }}</el-text>
+    </template>
     <span>Hi, there!</span>
   </el-drawer>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted, onUnmounted } from 'vue';
+import { ref, watch, computed, onMounted, onUnmounted } from 'vue';
+
+import { useCartStore } from '@/stores/cartStore';
 
 const props = defineProps<{
   modelValue?: boolean;
@@ -27,7 +31,11 @@ const props = defineProps<{
 
 const emit = defineEmits<{ (e: 'update:modelValue', value: boolean): void }>();
 
+const cartStore = useCartStore();
+
 const isCartDrawerOpen = ref(props.modelValue);
+
+const cartTitle = computed(() => `Shopping (${cartStore.totalItems}) items`);
 
 const isMobile = ref(window.innerWidth < 768);
 
@@ -56,4 +64,10 @@ onUnmounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.cart-title {
+  color: rgb(160, 39, 39);
+  font-weight: bold;
+  font-size: 1.2em;
+}
+</style>
