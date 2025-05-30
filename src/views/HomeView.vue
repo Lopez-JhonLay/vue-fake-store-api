@@ -7,7 +7,7 @@
       <el-divider />
       <el-main>
         <el-input
-          v-model="searchProductQuery"
+          v-model="searchQuery"
           style="width: 240px; margin-bottom: 20px"
           placeholder="Search products"
           :prefix-icon="Search"
@@ -19,26 +19,27 @@
             </el-col>
           </template>
           <template v-else>
-            <el-col
-              v-for="product in filteredProducts"
-              :key="product.id"
-              :xs="24"
-              :sm="24"
-              :md="12"
-              :lg="8"
-              :xl="4"
-            >
-              <ProductCard
-                :id="product.id"
-                :title="product.title"
-                :image="product.image"
-                :description="product.description"
-                :price="product.price"
-                @go-to-product="handleGoToProduct(product.id)"
-                @add-to-cart="handleAddToCart(product.id)"
-                @remove-from-cart="handleRemoveFromCart(product.id)"
-              />
-            </el-col>
+            <template v-if="filteredProducts.length">
+              <el-col
+                v-for="product in filteredProducts"
+                :key="product.id"
+                :xs="24"
+                :sm="24"
+                :md="12"
+                :lg="8"
+                :xl="4"
+              >
+                <ProductCard
+                  :product="product"
+                  @go-to-product="handleGoToProduct"
+                  @add-to-cart="handleAddToCart"
+                  @remove-from-cart="handleRemoveFromCart"
+                />
+              </el-col>
+            </template>
+            <template v-else>
+              <el-empty description="No products found." />
+            </template>
           </template>
         </el-row>
       </el-main>
@@ -59,31 +60,24 @@ import HeaderComponent from '@/components/HeaderComponent.vue';
 import ProductCard from '@/components/ProductCard.vue';
 import ProductCardSkeleton from '@/components/ProductCardSkeleton.vue';
 
-import { useRouter } from 'vue-router';
+import { useDebouncedRef } from '@/composables/useDebounceRef';
 
-import debounce from 'lodash/debounce';
+import type { Product } from '@/models/product';
+
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
 const productStore = useProductStore();
 const cartStore = useCartStore();
 
-const searchProductQuery = ref('');
-const debouncedQuery = ref('');
+const searchQuery = ref('');
+const debouncedSearch = useDebouncedRef(searchQuery);
 
-const updateDebouncedQuery = debounce((val: string) => {
-  debouncedQuery.value = val;
-}, 400);
-
-const filteredProducts = computed(() => {
-  if (!debouncedQuery.value) return productStore.products;
-  return productStore.products.filter((product) =>
-    product.title.toLowerCase().includes(debouncedQuery.value.toLowerCase()),
-  );
-});
-
-watch(searchProductQuery, (val) => {
-  updateDebouncedQuery(val);
+const filteredProducts = computed<Product[]>(() => {
+  const search = (debouncedSearch.value || '').toLowerCase();
+  if (!debouncedSearch.value) return productStore.products;
+  return productStore.products.filter((product) => product.title.toLowerCase().includes(search));
 });
 
 const handleGoToProduct = (id: number) => {

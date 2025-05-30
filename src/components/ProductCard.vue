@@ -1,23 +1,19 @@
 <template>
-  <el-card class="product-card" shadow="hover" @click="emit('go-to-product', props.id)">
-    <el-image :src="props.image" fit="contain" alt="{{ props.name }}" draggable="false" hover />
+  <el-card class="product-card" shadow="hover" @click="emit('go-to-product', product.id)">
+    <el-image :src="product.image" fit="contain" alt="{{ product.name }}" draggable="false" hover />
     <template #footer>
-      <el-text class="truncate-text">{{ props.title }}</el-text>
-      <el-text type="success">$ {{ props.price.toLocaleString() }}</el-text>
+      <el-text class="truncate-text">{{ product.title }}</el-text>
+      <el-text type="success" size="large">$ {{ product.price.toLocaleString() }}</el-text>
       <div>
         <el-button
           class="add-to-cart-btn"
-          :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
+          :type="cartStore.isInCart(product.id) ? 'danger' : 'primary'"
           @click.stop="
-            {
-              {
-                cartStore.isInCart(props.id)
-                  ? emit('remove-from-cart', props.id)
-                  : emit('add-to-cart', props.id);
-              }
-            }
+            cartStore.isInCart(product.id)
+              ? emit('remove-from-cart', product.id)
+              : emit('add-to-cart', product.id)
           "
-          >{{ cartStore.isInCart(props.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
+          >{{ cartStore.isInCart(product.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
         >
       </div>
     </template>
@@ -27,17 +23,10 @@
 <script setup lang="ts">
 import { useCartStore } from '@/stores/cartStore';
 
+import type { Product } from '@/models/product';
+
 const props = defineProps<{
-  id: number;
-  title: string;
-  price: number;
-  description: string;
-  category?: string;
-  image?: string;
-  rating?: {
-    rate: number;
-    count: number;
-  };
+  product: Product;
 }>();
 
 const emit = defineEmits<{
@@ -62,6 +51,7 @@ const cartStore = useCartStore();
   overflow: hidden;
   line-clamp: 1;
   box-orient: vertical;
+  margin-bottom: 1.5rem;
 }
 
 .add-to-cart-btn {

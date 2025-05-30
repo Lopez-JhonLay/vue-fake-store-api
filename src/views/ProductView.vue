@@ -9,7 +9,7 @@
           <el-image
             :src="productStore.selectedProduct?.image"
             fit="contain"
-            alt="{{ props.name }}"
+            :alt="productStore.selectedProduct?.title"
             draggable="false"
             hover
           />
@@ -25,19 +25,15 @@
               score-template="{value} points"
             />
             <el-text type="success" size="large" tag="b"
-              >$ {{ productStore.selectedProduct?.price.toLocaleString() }}</el-text
+              >$ {{ productStore.selectedProduct?.price?.toLocaleString() }}</el-text
             >
             <el-button
               class="add-to-cart-btn"
               :type="cartStore.isInCart(props.id) ? 'danger' : 'primary'"
               @click.stop="
-                {
-                  {
-                    cartStore.isInCart(props.id)
-                      ? handleRemoveFromCart(props.id)
-                      : handleAddToCart(props.id);
-                  }
-                }
+                cartStore.isInCart(props.id)
+                  ? handleRemoveFromCart(props.id)
+                  : handleAddToCart(props.id)
               "
               >{{ cartStore.isInCart(props.id) ? 'Remove from Cart' : 'Add to Cart' }}</el-button
             >
