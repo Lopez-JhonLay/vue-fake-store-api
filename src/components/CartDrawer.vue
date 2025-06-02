@@ -5,7 +5,7 @@
     </template>
     <div>
       <el-empty
-        v-if="cartStore.cartItems.length === 0"
+        v-if="!cartStore.cartItems.length"
         description="Your cart is empty"
         style="margin-top: 20px; text-align: center"
       />
@@ -38,9 +38,13 @@
               <div style="display: flex; justify-content: space-between">
                 <el-text type="success" size="large">$ {{ item.price.toLocaleString() }}</el-text>
                 <el-button-group class="ml-4">
-                  <el-button type="primary" :icon="Plus" />
+                  <el-button @click="cartStore.addQuantity(item.id)" type="primary" :icon="Plus" />
                   <el-button type="primary">{{ item.quantity }}</el-button>
-                  <el-button type="primary" :icon="Minus" />
+                  <el-button
+                    @click="cartStore.subtractQuantity(item.id)"
+                    type="primary"
+                    :icon="Minus"
+                  />
                 </el-button-group>
               </div>
             </div>
@@ -49,7 +53,13 @@
       </el-list>
     </div>
     <template #footer>
-      <el-button type="success" style="width: 100%; margin-top: 20px">
+      <el-text tag="b" size="large">$ {{ cartStore.totalPrice }}</el-text>
+
+      <el-button
+        type="success"
+        :disabled="!cartStore.cartItems.length"
+        style="width: 100%; margin-top: 20px"
+      >
         Proceed to Checkout
         <el-icon class="el-icon--right"><ArrowRight /></el-icon>
       </el-button>
@@ -115,6 +125,7 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   border: 2px solid rgb(109, 107, 107);
+  border-radius: 20px;
 }
 
 .cart-items-container {
